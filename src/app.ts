@@ -1,5 +1,3 @@
-import {sayHi} from "./tools.ts";
+import {launchServer} from "./server.ts";
 
-const myName = "Konstantin";
-sayHi(myName);
-const x = "ghjfjkg"
+launchServer();
