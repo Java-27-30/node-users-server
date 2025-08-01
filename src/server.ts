@@ -16,7 +16,9 @@ await (service as unknown as UserFilePersistenceService).restoreDataFromFile();
 export const launchServer = () => {
 const app = express();
 app.listen(3005, () => console.log("Server runs at http://localhost:3005"))
-
+    //=================Middleware=============
+    app.use(express.json())
+    //===================Router=============
     app.use('/api', apiRouter)
 
     app.use((req, res) => {

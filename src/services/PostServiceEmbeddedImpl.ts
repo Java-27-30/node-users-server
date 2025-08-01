@@ -25,6 +25,7 @@ export class PostServiceEmbeddedImpl implements PostService{
 
     removePost(id: number): Post {
         const index = this.posts.findIndex(item => item.id === id);
+        console.log(index);
         if(index === -1) throw "Post not found"
         return this.posts.splice(index, 1)[0]
     }

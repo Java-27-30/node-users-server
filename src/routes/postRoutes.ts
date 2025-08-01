@@ -1,9 +1,19 @@
-import express, {Request, Response} from "express";
+import express, {Request, Response, NextFunction} from "express";
 import * as controller from '../controllers/postController.js'
 import {Post} from "../model/postTypes.js";
 import {convertPostDto, parseBody} from "../utils/tools.ts";
+import {myLogger} from "../utils/logger.ts";
 
 export const postRouter = express.Router();
+
+postRouter.use((req:Request, res:Response, next:NextFunction) => {
+    myLogger.log(`Request "api/posts${req.url}" was recieved`)
+    next();
+})
+postRouter.use((req:Request, res:Response, next:NextFunction) => {
+    myLogger.save(`Request "api/posts${req.url}" was recieved`)
+    next();
+})
 
 postRouter.get('/user/:userId', (req:Request, res:Response) => {
     try {
@@ -22,7 +32,7 @@ postRouter.delete('/post/:id', (req:Request, res:Response) => {
     }
 )
 postRouter.put('/', async (req:Request, res:Response) => {
-    const postDto = await parseBody(req);
+    const postDto = req.body;
     const post:Post|null = convertPostDto(postDto);
     if(!post)
         res.status(400).send('Bad request')
@@ -31,7 +41,8 @@ postRouter.put('/', async (req:Request, res:Response) => {
 })
 
 postRouter.post('/', async (req:Request, res:Response) => {
-    const postDto = await parseBody(req);
+    //const postDto = await parseBody(req);
+    const postDto = req.body;
     const post: Post | null = convertPostDto(postDto);
     if (!post)
         res.status(400).send('Bad request')
@@ -42,7 +53,7 @@ postRouter.get('/',(req:Request, res:Response) => {
     const result:Post[] = controller.getAllPosts();
     res.type("application/json").send(JSON.stringify(result))
 })
-
+//http://localhost:3005/api/posts/post/2/user/5
 postRouter.get('/post/:id',(req:Request, res:Response) => {
     const {id} = req.params;
     if(!id)

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rimraf ./build && tsc && node ./build/src/app.js"
+    "start": "rimraf ./build && tsc && node ./build/src/app.js",
+    "dev": "tsx watch src/app.ts dev"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,9 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^24.0.14",
+    "express-async-handler": "^1.2.0",
     "rimraf": "^6.0.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
