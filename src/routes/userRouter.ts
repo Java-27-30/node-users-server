@@ -13,3 +13,9 @@ userRouter.post('/',async (req, res) => {
 // userRouter.get('/user', (req, res) => {
 //     userController.getUserById(req, res);
 // })
+userRouter.delete('/', (req, res) => {
+    userController.removeUser(req, res)
+})
+userRouter.put('/', async (req, res) => {
+    await userController.updateUser(req, res)
+})
