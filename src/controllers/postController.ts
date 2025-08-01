@@ -49,11 +49,11 @@ export function removePost(req:Request, res:Response) {
 export function getPostById(req:Request, res:Response) {
     const postId = parseInt(req.params.id);
     if(!postId) res.status(400).send("Bad ID in request")
-    try{
+ //   try{
         res.json(postService.getPost(postId));
-    } catch (e) {
-        res.status(404).send("Post not found")
-    }
+    // } catch (e) {
+    //     res.status(404).send("Post not found")
+    // }
 
 }
 

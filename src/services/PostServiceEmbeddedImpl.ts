@@ -1,5 +1,6 @@
 import {PostService} from "./PostService.js";
 import {Post} from "../model/postTypes.js";
+import {HttpError} from "../errorHandler/HttpError.js";
 
 export class PostServiceEmbeddedImpl implements PostService{
     private posts:Post[] = [];
@@ -19,14 +20,18 @@ export class PostServiceEmbeddedImpl implements PostService{
 
     getPost(id: number): Post {
         const index = this.posts.findIndex(item => item.id === id);
-        if(index === -1) throw "Post not found"
+       // if(index === -1) throw new Error(JSON.stringify({status: 404, message: "Post not found"}));
+        if(index === -1){
+            console.log((this.posts)[index].id)
+            throw new HttpError(404, "Post not found");
+        }
         return this.posts[index]
     }
 
     removePost(id: number): Post {
         const index = this.posts.findIndex(item => item.id === id);
         console.log(index);
-        if(index === -1) throw "Post not found"
+        if(index === -1) throw new Error("Post not found");
         return this.posts.splice(index, 1)[0]
     }
 
