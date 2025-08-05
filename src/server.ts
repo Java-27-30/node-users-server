@@ -7,6 +7,7 @@ import {UserFilePersistenceService} from "./services/UserFilePersistenceService.
 import {myLogger} from "./utils/logger.ts";
 import {PostServiceEmbeddedImpl} from "./services/PostServiceEmbeddedImpl.ts";
 import {HttpError} from "./errorHandler/HttpError.js";
+import {bodyValidation, pathValSchema} from "./middleware/bodyValidation.js";
 
 export const service:UserService = new UserServiceEmbeddedImpl();
 export const userController = new UserController(service);
@@ -19,6 +20,7 @@ const app = express();
 app.listen(3005, () => console.log("Server runs at http://localhost:3005"))
     //=================Middleware=============
     app.use(express.json())
+    app.use(bodyValidation(pathValSchema))
     //===================Router=============
     app.use('/api', apiRouter)
 
@@ -41,5 +43,17 @@ app.listen(3005, () => console.log("Server runs at http://localhost:3005"))
             myLogger.log("Data saved");
             myLogger.saveToFile("Server shutdown by Ctrl+C")
        });
+    })
+    process.on('SIGTERM', () => {
+        (service as unknown as UserFilePersistenceService).saveDataToFile().then(r => {
+            myLogger.log("Data saved");
+            myLogger.saveToFile("Server will restarted with watch-mode")
+        });
+    })
+    process.on('exit', () => {
+        (service as unknown as UserFilePersistenceService).saveDataToFile().then(r => {
+            myLogger.log("Data saved");
+            myLogger.saveToFile("Server restarted")
+        });
     })
 }

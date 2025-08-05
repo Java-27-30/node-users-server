@@ -1,8 +1,10 @@
+
 import {UserService} from "./UserService.ts";
 import {User} from "../model/userTypes.ts";
 import {UserFilePersistenceService} from "./UserFilePersistenceService.ts";
 import fs from "fs";
 import {myLogger} from "../utils/logger.ts";
+import {HttpError} from "../errorHandler/HttpError.js";
 
 export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenceService{
     private users: User[] = [];
@@ -14,7 +16,8 @@ export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenc
             this.users.push(user);
             return true;
         }
-        return false;
+        myLogger.log(`Failed! User with id ${user.id} already exists`)
+        throw new HttpError(409, `User with id ${user.id} already exists`)
     }
 
     getAllUsers(): User[] {
@@ -23,13 +26,19 @@ export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenc
 
     getUserById(id: number): User {
        const user = this.users.find(item => item.id === id);
-       if(!user) throw "404";
+       if(!user){
+           myLogger.log(`Failed! User with id ${id} not found`)
+           throw new HttpError(404, `User with id ${id} not found`);
+       }
         return user;
     }
 
     removeUser(id: number): User {
         const index = this.users.findIndex(item => item.id === id);
-        if(index === -1) throw "404";
+        if(index === -1) {
+            myLogger.log(`Failed! User with id ${id} not found`)
+            throw new HttpError(404, `Nothing to remove. User with id ${id} not found`);
+        }
         const removed = this.users[index];
         this.users.splice(index, 1);
         return removed;
@@ -37,7 +46,10 @@ export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenc
 
     updateUser(newUser: User): void {
         const index = this.users.findIndex(item => item.id === newUser.id);
-        if(index === -1) throw "404";
+        if(index === -1) {
+            myLogger.log(`Failed! User with id ${newUser.id} not found`)
+            throw new HttpError(404, `Nothing to update. User with id ${newUser.id} not found`);
+        }
         this.users[index] = newUser;
     }
 
